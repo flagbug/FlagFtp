@@ -1,9 +1,8 @@
 ﻿using System;
-using System.IO;
 
 namespace FlagFtp
 {
-    public class FtpFile
+    public class FtpFile : FtpFileSystemInfo
     {
         /// <summary>
         /// Gets the last write time.
@@ -11,19 +10,21 @@ namespace FlagFtp
         public DateTime LastWriteTime { get; private set; }
 
         /// <summary>
-        /// Gets the full name of the file.
+        /// Gets the length.
         /// </summary>
-        public string FullName { get; private set; }
+        public long Length { get; private set; }
 
         /// <summary>
-        /// Gets the name of the file.
+        /// Initializes a new instance of the <see cref="FtpFile"/> class.
         /// </summary>
-        public string Name
+        /// <param name="path">The path of the file.</param>
+        /// <param name="lastWriteTime">The last write time.</param>
+        /// <param name="length">The file length.</param>
+        public FtpFile(Uri path, DateTime lastWriteTime, long length)
+            : base(path, FileSystemInfoType.File)
         {
-            get
-            {
-                return Path.GetDirectoryName(this.FullName);
-            }
+            this.LastWriteTime = lastWriteTime;
+            this.Length = length;
         }
     }
 }

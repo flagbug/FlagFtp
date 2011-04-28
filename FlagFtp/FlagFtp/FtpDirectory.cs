@@ -1,20 +1,11 @@
-﻿using System.IO;
+﻿using System;
 
 namespace FlagFtp
 {
-    public class FtpDirectory
+    public class FtpDirectory : FtpFileSystemInfo
     {
-        /// <summary>
-        /// Gets the full name of the directory.
-        /// </summary>
-        public string FullName { get; private set; }
-
-        public string Name
-        {
-            get
-            {
-                return Path.GetDirectoryName(this.FullName);
-            }
-        }
+        public FtpDirectory(Uri path)
+            : base(path, FileSystemInfoType.Directory)
+        { }
     }
 }
