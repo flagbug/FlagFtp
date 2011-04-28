@@ -21,7 +21,7 @@ namespace FlagFtp
         /// <param name="lastWriteTime">The last write time.</param>
         /// <param name="length">The file length.</param>
         public FtpFile(Uri path, DateTime lastWriteTime, long length)
-            : base(path, FileSystemInfoType.File)
+            : base(path, FtpFileSystemInfoType.File)
         {
             this.LastWriteTime = lastWriteTime;
             this.Length = length;

@@ -3,7 +3,7 @@ using System.IO;
 
 namespace FlagFtp
 {
-    public enum FileSystemInfoType
+    public enum FtpFileSystemInfoType
     {
         File,
         Directory
@@ -30,14 +30,14 @@ namespace FlagFtp
         /// <summary>
         /// Gets the type.
         /// </summary>
-        public FileSystemInfoType Type { get; private set; }
+        public FtpFileSystemInfoType Type { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FtpFileSystemInfo"/> class.
         /// </summary>
         /// <param name="fullName">The full name.</param>
         /// <param name="type">The type.</param>
-        protected FtpFileSystemInfo(Uri fullName, FileSystemInfoType type)
+        protected FtpFileSystemInfo(Uri fullName, FtpFileSystemInfoType type)
         {
             if (fullName == null)
                 throw new ArgumentNullException("fullName");
