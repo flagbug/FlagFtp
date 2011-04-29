@@ -43,6 +43,7 @@
     <Compile Include="FtpDirectory.cs" />
     <Compile Include="FtpFile.cs" />
     <Compile Include="FtpFileSystemInfo.cs" />
+    <Compile Include="FtpStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
