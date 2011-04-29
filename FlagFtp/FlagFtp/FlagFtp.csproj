@@ -40,8 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FtpClient.cs" />
-    <Compile Include="FtpDirectory.cs" />
-    <Compile Include="FtpFile.cs" />
+    <Compile Include="FtpDirectoryInfo.cs" />
+    <Compile Include="FtpFileInfo.cs" />
     <Compile Include="FtpFileSystemInfo.cs" />
     <Compile Include="FtpStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

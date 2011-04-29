@@ -40,10 +40,10 @@ namespace FlagFtp
         /// </summary>
         /// <param name="directory">The directory.</param>
         /// <returns></returns>
-        public IEnumerable<FtpDirectory> GetDirectories(Uri directory)
+        public IEnumerable<FtpDirectoryInfo> GetDirectories(Uri directory)
         {
             return this.GetFileSystemInfos(directory, FtpFileSystemInfoType.Directory)
-                .Cast<FtpDirectory>();
+                .Cast<FtpDirectoryInfo>();
         }
 
         /// <summary>
@@ -51,10 +51,10 @@ namespace FlagFtp
         /// </summary>
         /// <param name="directory">The directory.</param>
         /// <returns></returns>
-        public IEnumerable<FtpFile> GetFiles(Uri directory)
+        public IEnumerable<FtpFileInfo> GetFiles(Uri directory)
         {
             return this.GetFileSystemInfos(directory, FtpFileSystemInfoType.File)
-                .Cast<FtpFile>();
+                .Cast<FtpFileInfo>();
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace FlagFtp
         /// </summary>
         /// <param name="file">The file to open.</param>
         /// <returns>An FTP stream to read from the file.</returns>
-        public FtpStream OpenRead(FtpFile file)
+        public FtpStream OpenRead(FtpFileInfo file)
         {
             WebClient client = new WebClient();
             client.Credentials = this.Credentials;
@@ -89,7 +89,7 @@ namespace FlagFtp
         /// Deletes the specified FTP file.
         /// </summary>
         /// <param name="file">The file to delete.</param>
-        public void DeleteFile(FtpFile file)
+        public void DeleteFile(FtpFileInfo file)
         {
             this.DeleteFile(file.Uri);
         }
@@ -111,7 +111,7 @@ namespace FlagFtp
         /// Deletes the specified FTP directory.
         /// </summary>
         /// <param name="directory">The directory to delete.</param>
-        public void DeleteDirectory(FtpDirectory directory)
+        public void DeleteDirectory(FtpDirectoryInfo directory)
         {
             this.DeleteDirectory(directory.Uri);
         }
@@ -172,12 +172,12 @@ namespace FlagFtp
                         {
                             case FtpFileSystemInfoType.Directory:
                                 return infos.Where(info => info.IsDirectory)
-                                    .Select(info => new FtpDirectory(info.FullName))
+                                    .Select(info => new FtpDirectoryInfo(info.FullName))
                                     .Cast<FtpFileSystemInfo>();
 
                             case FtpFileSystemInfoType.File:
                                 return infos.Where(info => !info.IsDirectory)
-                                    .Select(info => new FtpFile(info.FullName, this.GetTimeStamp(info.FullName), info.FileLength))
+                                    .Select(info => new FtpFileInfo(info.FullName, this.GetTimeStamp(info.FullName), info.FileLength))
                                     .Cast<FtpFileSystemInfo>();
                         }
                     }
