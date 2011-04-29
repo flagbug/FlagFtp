@@ -35,6 +35,23 @@ namespace FlagFtp
                 throw new ArgumentException("The host isn't a valid FTP Uri", "host");
         }
 
+        /// <summary>
+        /// Gets the directories that are contained in the specified directory.
+        /// </summary>
+        /// <param name="directory">The directory.</param>
+        /// <returns></returns>
+        public IEnumerable<FtpDirectory> GetDirectories(Uri directory)
+        {
+            return this.GetFileSystemInfos(directory, FtpFileSystemInfoType.Directory)
+                .Cast<FtpDirectory>();
+        }
+
+        /// <summary>
+        /// Gets the files or directories from the specified directory.
+        /// </summary>
+        /// <param name="directory">The directory.</param>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
         private IEnumerable<FtpFileSystemInfo> GetFileSystemInfos(Uri directory, FtpFileSystemInfoType type)
         {
             FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(directory);
@@ -62,21 +79,23 @@ namespace FlagFtp
                                 {
                                     IsDirectory = match.Groups["FileOrDirectory"].Value == "d" ? true : false,
                                     FileLength = long.Parse(match.Groups["FileSize"].Value),
-                                    FullName = Path.Combine(directory.AbsoluteUri, match.Groups["Name"].Value)
+                                    Name = match.Groups["Name"].Value,
+                                    FullName = new Uri(new Uri(directory.AbsoluteUri), match.Groups["Name"].Value)
                                 })
+                            .Where(info => info.Name != "." && info.Name != "..")
                             .ToList();
 
                         if (type == FtpFileSystemInfoType.Directory)
                         {
                             return infos.Where(info => info.IsDirectory)
-                                .Select(info => new FtpDirectory(new Uri(info.FullName)))
+                                .Select(info => new FtpDirectory(info.FullName))
                                 .Cast<FtpFileSystemInfo>();
                         }
 
                         else
                         {
                             return infos.Where(info => !info.IsDirectory)
-                                .Select(info => new FtpFile(new Uri(info.FullName), this.GetTimeStamp(new Uri(info.FullName)), info.FileLength))
+                                .Select(info => new FtpFile(info.FullName, this.GetTimeStamp(info.FullName), info.FileLength))
                                 .Cast<FtpFileSystemInfo>();
                         }
                     }
