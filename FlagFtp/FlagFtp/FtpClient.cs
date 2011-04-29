@@ -7,6 +7,9 @@ using System.Text.RegularExpressions;
 
 namespace FlagFtp
 {
+    /// <summary>
+    /// Provides methods for acting on a FTP-server
+    /// </summary>
     public class FtpClient
     {
         /// <summary>
@@ -32,7 +35,7 @@ namespace FlagFtp
                 throw new ArgumentNullException("host");
 
             if (host.Scheme != Uri.UriSchemeFtp)
-                throw new ArgumentException("The host isn't a valid FTP Uri", "host");
+                throw new ArgumentException("The host isn't a valid FTP URI", "host");
         }
 
         /// <summary>
@@ -42,6 +45,12 @@ namespace FlagFtp
         /// <returns></returns>
         public IEnumerable<FtpDirectoryInfo> GetDirectories(Uri directory)
         {
+            if (directory == null)
+                throw new ArgumentNullException("directory");
+
+            if (directory.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
+
             return this.GetFileSystemInfos(directory, FtpFileSystemInfoType.Directory)
                 .Cast<FtpDirectoryInfo>();
         }
@@ -53,6 +62,12 @@ namespace FlagFtp
         /// <returns></returns>
         public IEnumerable<FtpFileInfo> GetFiles(Uri directory)
         {
+            if (directory == null)
+                throw new ArgumentNullException("directory");
+
+            if (directory.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
+
             return this.GetFileSystemInfos(directory, FtpFileSystemInfoType.File)
                 .Cast<FtpFileInfo>();
         }
@@ -61,9 +76,14 @@ namespace FlagFtp
         /// Opens the specified file for read access.
         /// </summary>
         /// <param name="file">The file to open.</param>
-        /// <returns>An FTP stream to read from the file.</returns>
+        /// <returns>
+        /// An FTP stream to read from the file.
+        /// </returns>
         public FtpStream OpenRead(FtpFileInfo file)
         {
+            if (file == null)
+                throw new ArgumentNullException("file");
+
             WebClient client = new WebClient();
             client.Credentials = this.Credentials;
 
@@ -77,6 +97,12 @@ namespace FlagFtp
         /// <returns>An FTP stream to read from the file.</returns>
         public FtpStream OpenRead(Uri file)
         {
+            if (file == null)
+                throw new ArgumentNullException("file");
+
+            if (file.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The file isn't a valid FTP URI", "file");
+
             WebClient client = new WebClient();
             client.Credentials = this.Credentials;
 
@@ -100,6 +126,12 @@ namespace FlagFtp
         /// <param name="file">The URI of the file to delete.</param>
         public void DeleteFile(Uri file)
         {
+            if (file == null)
+                throw new ArgumentNullException("file");
+
+            if (file.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The file isn't a valid FTP URI", "file");
+
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(file);
             request.Credentials = this.Credentials;
             request.Method = WebRequestMethods.Ftp.DeleteFile;
@@ -113,6 +145,9 @@ namespace FlagFtp
         /// <param name="directory">The directory to delete.</param>
         public void DeleteDirectory(FtpDirectoryInfo directory)
         {
+            if (directory == null)
+                throw new ArgumentNullException("directory");
+
             this.DeleteDirectory(directory.Uri);
         }
 
@@ -122,6 +157,12 @@ namespace FlagFtp
         /// <param name="directory">The URI of the directory to delete.</param>
         public void DeleteDirectory(Uri directory)
         {
+            if (directory == null)
+                throw new ArgumentNullException("directory");
+
+            if (directory.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
+
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(directory);
             request.Credentials = this.Credentials;
             request.Method = WebRequestMethods.Ftp.RemoveDirectory;
@@ -137,6 +178,12 @@ namespace FlagFtp
         /// <returns></returns>
         private IEnumerable<FtpFileSystemInfo> GetFileSystemInfos(Uri directory, FtpFileSystemInfoType type)
         {
+            if (directory == null)
+                throw new ArgumentNullException("directory");
+
+            if (directory.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
+
             FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(directory);
 
             request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
@@ -190,10 +237,16 @@ namespace FlagFtp
         /// <summary>
         /// Gets the time stamp for the specified file.
         /// </summary>
-        /// <param name="files">The file uri.</param>
+        /// <param name="file">The file.</param>
         /// <returns></returns>
         private DateTime GetTimeStamp(Uri file)
         {
+            if (file == null)
+                throw new ArgumentNullException("file");
+
+            if (file.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The file isn't a valid FTP URI", "file");
+
             FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(file);
 
             request.Method = WebRequestMethods.Ftp.GetDateTimestamp;
@@ -212,6 +265,12 @@ namespace FlagFtp
         /// <returns></returns>
         private long GetFileSize(Uri file)
         {
+            if (file == null)
+                throw new ArgumentNullException("file");
+
+            if (file.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The file isn't a valid FTP URI", "file");
+
             FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(file);
 
             request.Method = WebRequestMethods.Ftp.GetFileSize;

@@ -2,6 +2,9 @@
 
 namespace FlagFtp
 {
+    /// <summary>
+    /// Represents a file on a FTP-server
+    /// </summary>
     public class FtpFileInfo : FtpFileSystemInfo
     {
         /// <summary>
@@ -23,6 +26,9 @@ namespace FlagFtp
         internal FtpFileInfo(Uri path, DateTime lastWriteTime, long length)
             : base(path, FtpFileSystemInfoType.File)
         {
+            if (length < 0)
+                throw new ArgumentOutOfRangeException("length");
+
             this.LastWriteTime = lastWriteTime;
             this.Length = length;
         }

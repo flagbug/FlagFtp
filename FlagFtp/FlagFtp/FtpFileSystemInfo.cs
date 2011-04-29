@@ -3,12 +3,24 @@ using System.IO;
 
 namespace FlagFtp
 {
+    /// <summary>
+    /// Specifies the type of a file system info
+    /// </summary>
     public enum FtpFileSystemInfoType
     {
+        /// <summary>
+        /// A normal file
+        /// </summary>
         File,
+        /// <summary>
+        /// A directory
+        /// </summary>
         Directory
     }
 
+    /// <summary>
+    /// The base class for FTPFileInfo and FTPDirectoryInfo
+    /// </summary>
     public abstract class FtpFileSystemInfo
     {
         /// <summary>
@@ -46,7 +58,7 @@ namespace FlagFtp
         /// <summary>
         /// Initializes a new instance of the <see cref="FtpFileSystemInfo"/> class.
         /// </summary>
-        /// <param name="fullName">The full name.</param>
+        /// <param name="uri">The URI.</param>
         /// <param name="type">The type.</param>
         protected internal FtpFileSystemInfo(Uri uri, FtpFileSystemInfoType type)
         {
@@ -54,7 +66,7 @@ namespace FlagFtp
                 throw new ArgumentNullException("uri");
 
             if (uri.Scheme != Uri.UriSchemeFtp)
-                throw new ArgumentException("The name isn't a valid FTP Uri", "uri");
+                throw new ArgumentException("The uri isn't a valid FTP Uri", "uri");
 
             this.Uri = uri;
             this.Type = type;
