@@ -58,6 +58,33 @@ namespace FlagFtp
         }
 
         /// <summary>
+        /// Opens the specified file for read access.
+        /// </summary>
+        /// <param name="file">The file to open.</param>
+        /// <returns>An FTP stream to read from the file.</returns>
+        public FtpStream OpenRead(FtpFile file)
+        {
+            WebClient client = new WebClient();
+            client.Credentials = this.Credentials;
+
+            return new FtpStream(client.OpenRead(file.Uri), file.Length);
+        }
+
+        /// <summary>
+        /// Opens the specified file for read access.
+        /// </summary>
+        /// <param name="file">The URI of the file to open.</param>
+        /// <returns>An FTP stream to read from the file.</returns>
+        public FtpStream OpenRead(Uri file)
+        {
+            WebClient client = new WebClient();
+            client.Credentials = this.Credentials;
+
+            long fileSize = this.GetFileSize(file);
+            return new FtpStream(client.OpenRead(file), fileSize);
+        }
+
+        /// <summary>
         /// Gets the files or directories from the specified directory.
         /// </summary>
         /// <param name="directory">The directory.</param>
@@ -117,7 +144,7 @@ namespace FlagFtp
         /// <summary>
         /// Gets the time stamp for the specified file.
         /// </summary>
-        /// <param name="files">The files.</param>
+        /// <param name="files">The file uri.</param>
         /// <returns></returns>
         private DateTime GetTimeStamp(Uri file)
         {
@@ -129,6 +156,24 @@ namespace FlagFtp
             using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
             {
                 return response.LastModified;
+            }
+        }
+
+        /// <summary>
+        /// Gets the size of the specified file.
+        /// </summary>
+        /// <param name="file">The file uri.</param>
+        /// <returns></returns>
+        private long GetFileSize(Uri file)
+        {
+            FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(file);
+
+            request.Method = WebRequestMethods.Ftp.GetFileSize;
+            request.Credentials = this.Credentials;
+
+            using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
+            {
+                return response.ContentLength;
             }
         }
     }
