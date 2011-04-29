@@ -47,6 +47,17 @@ namespace FlagFtp
         }
 
         /// <summary>
+        /// Gets the files that are contained in the specified directory.
+        /// </summary>
+        /// <param name="directory">The directory.</param>
+        /// <returns></returns>
+        public IEnumerable<FtpFile> GetFiles(Uri directory)
+        {
+            return this.GetFileSystemInfos(directory, FtpFileSystemInfoType.File)
+                .Cast<FtpFile>();
+        }
+
+        /// <summary>
         /// Gets the files or directories from the specified directory.
         /// </summary>
         /// <param name="directory">The directory.</param>
@@ -80,7 +91,7 @@ namespace FlagFtp
                                     IsDirectory = match.Groups["FileOrDirectory"].Value == "d" ? true : false,
                                     FileLength = long.Parse(match.Groups["FileSize"].Value),
                                     Name = match.Groups["Name"].Value,
-                                    FullName = new Uri(new Uri(directory.AbsoluteUri), match.Groups["Name"].Value)
+                                    FullName = new Uri(new Uri(directory + "/"), match.Groups["Name"].Value)
                                 })
                             .Where(info => info.Name != "." && info.Name != "..")
                             .ToList();
