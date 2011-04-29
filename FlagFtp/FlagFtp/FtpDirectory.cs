@@ -4,7 +4,7 @@ namespace FlagFtp
 {
     public class FtpDirectory : FtpFileSystemInfo
     {
-        public FtpDirectory(Uri path)
+        internal FtpDirectory(Uri path)
             : base(path, FtpFileSystemInfoType.Directory)
         { }
     }

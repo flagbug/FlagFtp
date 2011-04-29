@@ -14,7 +14,18 @@ namespace FlagFtp
         /// <summary>
         /// Gets the full name.
         /// </summary>
-        public string FullName { get; private set; }
+        public string FullName
+        {
+            get
+            {
+                return this.Uri.AbsoluteUri;
+            }
+        }
+
+        /// <summary>
+        /// Gets the URI.
+        /// </summary>
+        public Uri Uri { get; private set; }
 
         /// <summary>
         /// Gets the name.
@@ -23,7 +34,7 @@ namespace FlagFtp
         {
             get
             {
-                return Path.GetDirectoryName(this.FullName);
+                return Path.GetFileName(this.FullName);
             }
         }
 
@@ -37,15 +48,15 @@ namespace FlagFtp
         /// </summary>
         /// <param name="fullName">The full name.</param>
         /// <param name="type">The type.</param>
-        protected FtpFileSystemInfo(Uri fullName, FtpFileSystemInfoType type)
+        protected internal FtpFileSystemInfo(Uri uri, FtpFileSystemInfoType type)
         {
-            if (fullName == null)
-                throw new ArgumentNullException("fullName");
+            if (uri == null)
+                throw new ArgumentNullException("uri");
 
-            if (fullName.Scheme != Uri.UriSchemeFtp)
-                throw new ArgumentException("The name isn't a valid FTP Uri", "host");
+            if (uri.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The name isn't a valid FTP Uri", "uri");
 
-            this.FullName = fullName.OriginalString;
+            this.Uri = uri;
             this.Type = type;
         }
     }
