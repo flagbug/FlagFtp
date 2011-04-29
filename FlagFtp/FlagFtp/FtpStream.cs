@@ -4,6 +4,9 @@ using System.Runtime.Remoting;
 
 namespace FlagFtp
 {
+    /// <summary>
+    /// Represents a stream of a file from an FTP server which supports the read of the length property
+    /// </summary>
     public class FtpStream : Stream
     {
         private Stream internalStream;
@@ -89,14 +92,8 @@ namespace FlagFtp
         ///   </exception>
         public override long Position
         {
-            get
-            {
-                return this.internalStream.Position;
-            }
-            set
-            {
-                this.internalStream.Position = value;
-            }
+            get { return this.internalStream.Position; }
+            set { this.internalStream.Position = value; }
         }
 
         /// <summary>

@@ -81,7 +81,52 @@ namespace FlagFtp
             client.Credentials = this.Credentials;
 
             long fileSize = this.GetFileSize(file);
+
             return new FtpStream(client.OpenRead(file), fileSize);
+        }
+
+        /// <summary>
+        /// Deletes the specified FTP file.
+        /// </summary>
+        /// <param name="file">The file to delete.</param>
+        public void DeleteFile(FtpFile file)
+        {
+            this.DeleteFile(file.Uri);
+        }
+
+        /// <summary>
+        /// Deletes the specified file.
+        /// </summary>
+        /// <param name="file">The URI of the file to delete.</param>
+        public void DeleteFile(Uri file)
+        {
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(file);
+            request.Credentials = this.Credentials;
+            request.Method = WebRequestMethods.Ftp.DeleteFile;
+
+            request.GetResponse();
+        }
+
+        /// <summary>
+        /// Deletes the specified FTP directory.
+        /// </summary>
+        /// <param name="directory">The directory to delete.</param>
+        public void DeleteDirectory(FtpDirectory directory)
+        {
+            this.DeleteDirectory(directory.Uri);
+        }
+
+        /// <summary>
+        /// Deletes the specified directory.
+        /// </summary>
+        /// <param name="directory">The URI of the directory to delete.</param>
+        public void DeleteDirectory(Uri directory)
+        {
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(directory);
+            request.Credentials = this.Credentials;
+            request.Method = WebRequestMethods.Ftp.RemoveDirectory;
+
+            request.GetResponse();
         }
 
         /// <summary>
@@ -123,22 +168,23 @@ namespace FlagFtp
                             .Where(info => info.Name != "." && info.Name != "..")
                             .ToList();
 
-                        if (type == FtpFileSystemInfoType.Directory)
+                        switch (type)
                         {
-                            return infos.Where(info => info.IsDirectory)
-                                .Select(info => new FtpDirectory(info.FullName))
-                                .Cast<FtpFileSystemInfo>();
-                        }
+                            case FtpFileSystemInfoType.Directory:
+                                return infos.Where(info => info.IsDirectory)
+                                    .Select(info => new FtpDirectory(info.FullName))
+                                    .Cast<FtpFileSystemInfo>();
 
-                        else
-                        {
-                            return infos.Where(info => !info.IsDirectory)
-                                .Select(info => new FtpFile(info.FullName, this.GetTimeStamp(info.FullName), info.FileLength))
-                                .Cast<FtpFileSystemInfo>();
+                            case FtpFileSystemInfoType.File:
+                                return infos.Where(info => !info.IsDirectory)
+                                    .Select(info => new FtpFile(info.FullName, this.GetTimeStamp(info.FullName), info.FileLength))
+                                    .Cast<FtpFileSystemInfo>();
                         }
                     }
                 }
             }
+
+            throw new InvalidOperationException("Method should not reach this code!");
         }
 
         /// <summary>
