@@ -117,6 +117,9 @@ namespace FlagFtp
         /// <param name="file">The file to delete.</param>
         public void DeleteFile(FtpFileInfo file)
         {
+            if (file == null)
+                throw new ArgumentNullException("file");
+
             this.DeleteFile(file.Uri);
         }
 

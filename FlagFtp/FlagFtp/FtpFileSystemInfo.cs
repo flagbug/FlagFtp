@@ -28,10 +28,7 @@ namespace FlagFtp
         /// </summary>
         public string FullName
         {
-            get
-            {
-                return this.Uri.AbsoluteUri;
-            }
+            get { return this.Uri.AbsoluteUri; }
         }
 
         /// <summary>
@@ -44,10 +41,7 @@ namespace FlagFtp
         /// </summary>
         public string Name
         {
-            get
-            {
-                return Path.GetFileName(this.FullName);
-            }
+            get { return Path.GetFileName(this.FullName); }
         }
 
         /// <summary>
