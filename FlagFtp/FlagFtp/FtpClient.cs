@@ -94,7 +94,7 @@ namespace FlagFtp
         /// Opens the specified file for read access.
         /// </summary>
         /// <param name="file">The URI of the file to open.</param>
-        /// <returns>An FTP stream to read from the file.</returns>
+        /// <returns>A FTP stream to read from the file.</returns>
         public FtpStream OpenRead(Uri file)
         {
             if (file == null)
@@ -109,6 +109,26 @@ namespace FlagFtp
             long fileSize = this.GetFileSize(file);
 
             return new FtpStream(client.OpenRead(file), fileSize);
+        }
+
+        /// <summary>
+        /// Opens the specified file for write access.
+        /// </summary>
+        /// <param name="file">The URI of the file to open.</param>
+        /// <returns>A stream to write to the file.</returns>
+        public Stream OpenWrite(Uri file)
+        {
+            if (file == null)
+                throw new ArgumentNullException("file");
+
+            if (file.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The file isn't a valid FTP URI", "file");
+
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(file);
+            request.Credentials = this.Credentials;
+            request.Method = WebRequestMethods.Ftp.UploadFile;
+
+            return request.GetRequestStream();
         }
 
         /// <summary>
