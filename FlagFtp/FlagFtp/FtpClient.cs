@@ -143,6 +143,25 @@ namespace FlagFtp
         }
 
         /// <summary>
+        /// Creates the specified directory on the FTP server.
+        /// </summary>
+        /// <param name="directory">The URI of the directory to create.</param>
+        public void CreateDirectory(Uri directory)
+        {
+            if (directory == null)
+                throw new ArgumentNullException("directory");
+
+            if (directory.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
+
+            WebRequest request = WebRequest.Create(directory);
+            request.Method = WebRequestMethods.Ftp.MakeDirectory;
+            request.Credentials = this.Credentials;
+
+            using (var response = request.GetResponse()) { }
+        }
+
+        /// <summary>
         /// Deletes the specified FTP directory.
         /// </summary>
         /// <param name="directory">The directory to delete.</param>
