@@ -23,7 +23,7 @@ namespace FlagFtp
         /// <summary>
         /// Initializes a new instance of the <see cref="FtpClient"/> class.
         /// </summary>
-        /// <param name="credentials">The credentials.</param>
+        /// <param name="credentials">The login credentials.</param>
         public FtpClient(NetworkCredential credentials)
         {
             if (credentials == null)
@@ -34,7 +34,9 @@ namespace FlagFtp
         /// Gets the directories that are contained in the specified directory.
         /// </summary>
         /// <param name="directory">The directory.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// An enumeration of <see cref="FlagFtp.FtpDirectoryInfo"/>.
+        /// </returns>
         public IEnumerable<FtpDirectoryInfo> GetDirectories(Uri directory)
         {
             if (directory == null)
@@ -51,7 +53,9 @@ namespace FlagFtp
         /// Gets the files that are contained in the specified directory.
         /// </summary>
         /// <param name="directory">The directory.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// An enumeration of <see cref="FlagFtp.FtpFileInfo"/>.
+        /// </returns>
         public IEnumerable<FtpFileInfo> GetFiles(Uri directory)
         {
             if (directory == null)
@@ -86,7 +90,9 @@ namespace FlagFtp
         /// Opens the specified file for read access.
         /// </summary>
         /// <param name="file">The URI of the file to open.</param>
-        /// <returns>A FTP stream to read from the file.</returns>
+        /// <returns>
+        /// A <see cref="FlagFtp.FtpStream"/> to read from the file.
+        /// </returns>
         public FtpStream OpenRead(Uri file)
         {
             if (file == null)
@@ -106,8 +112,25 @@ namespace FlagFtp
         /// <summary>
         /// Opens the specified file for write access.
         /// </summary>
+        /// <param name="file">The file to open.</param>
+        /// <returns>
+        /// A <see cref="System.IO.Stream"/> to write to the file.
+        /// </returns>
+        public Stream OpenWrite(FtpFileInfo file)
+        {
+            if (file == null)
+                throw new ArgumentNullException("file");
+
+            return this.OpenWrite(file.Uri);
+        }
+
+        /// <summary>
+        /// Opens the specified file for write access.
+        /// </summary>
         /// <param name="file">The URI of the file to open.</param>
-        /// <returns>A stream to write to the file.</returns>
+        /// <returns>
+        /// A <see cref="System.IO.Stream"/> to write to the file.
+        /// </returns>
         public Stream OpenWrite(Uri file)
         {
             if (file == null)
@@ -205,12 +228,11 @@ namespace FlagFtp
         }
 
         /// <summary>
-        /// Gets the <see cref="FtpFileInfo"/> for the specified URI.
+        /// Gets the <see cref="FlagFtp.FtpFileInfo"/> for the specified URI.
         /// </summary>
         /// <param name="file">The URI of the file.</param>
         /// <returns>
-        /// A <see cref="FtpFileInfo"/> that contains informations about the file.
-        /*/// If the file doesn't exists, null.*/
+        /// A <see cref="FlagFtp.FtpFileInfo"/> that contains informations about the file.
         /// </returns>
         public FtpFileInfo GetFileInfo(Uri file)
         {
@@ -227,11 +249,11 @@ namespace FlagFtp
         }
 
         /// <summary>
-        /// Gets the <see cref="FtpDirectoryInfo"/> for the specified URI.
+        /// Gets the <see cref="FlagFtp.FtpDirectoryInfo"/> for the specified URI.
         /// </summary>
         /// <param name="directory">The URI of the directory.</param>
         /// <returns>
-        /// A <see cref="FtpDirectoryInfo"/> that contains informations about the directory.
+        /// A <see cref="FlagFtp.FtpDirectoryInfo"/> that contains informations about the directory.
         /// </returns>
         public FtpDirectoryInfo GetDirectoryInfo(Uri directory)
         {
@@ -248,7 +270,9 @@ namespace FlagFtp
         /// Determines if the specified file exists on the FTP server.
         /// </summary>
         /// <param name="file">The URI of the file.</param>
-        /// <returns>True, if the file exists; otherwise false.</returns>
+        /// <returns>
+        /// True, if the file exists; otherwise false.
+        /// </returns>
         public bool FileExists(Uri file)
         {
             if (file == null)
@@ -288,8 +312,10 @@ namespace FlagFtp
         /// <summary>
         /// Determines if the specified directory exists on the FTP server.
         /// </summary>
-        /// <param name="file">The URI of the directory.</param>
-        /// <returns>True, if the directory exists; otherwise false.</returns>
+        /// <param name="directory">The directory.</param>
+        /// <returns>
+        /// True, if the directory exists; otherwise false.
+        /// </returns>
         public bool DirectoryExists(Uri directory)
         {
             if (directory == null)
@@ -331,7 +357,9 @@ namespace FlagFtp
         /// </summary>
         /// <param name="directory">The directory.</param>
         /// <param name="type">The type.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// An enumeration of <see cref="FlagFtp.FtpFileSystemInfo"/> with the type of the specified type argument.
+        /// </returns>
         private IEnumerable<FtpFileSystemInfo> GetFileSystemInfos(Uri directory, FtpFileSystemInfoType type)
         {
             if (directory == null)
@@ -393,7 +421,9 @@ namespace FlagFtp
         /// Gets the time stamp for the specified file.
         /// </summary>
         /// <param name="file">The file.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// A <see cref="System.DateTime"/> object the represents the last write time of the file.
+        /// </returns>
         private DateTime GetTimeStamp(Uri file)
         {
             if (file == null)
@@ -414,10 +444,12 @@ namespace FlagFtp
         }
 
         /// <summary>
-        /// Gets the size of the specified file.
+        /// Gets the size of the specified file in bytes.
         /// </summary>
-        /// <param name="file">The file uri.</param>
-        /// <returns></returns>
+        /// <param name="file">The file URI.</param>
+        /// <returns>
+        /// The file size in bytes.
+        /// </returns>
         private long GetFileSize(Uri file)
         {
             if (file == null)
