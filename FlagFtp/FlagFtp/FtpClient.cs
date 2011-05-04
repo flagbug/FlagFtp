@@ -218,7 +218,7 @@ namespace FlagFtp
         /// <param name="file">The URI of the file.</param>
         /// <returns>
         /// A <see cref="FtpFileInfo"/> that contains informations about the file.
-        /// If the file doesn't exists, null.
+        /*/// If the file doesn't exists, null.*/
         /// </returns>
         public FtpFileInfo GetFileInfo(Uri file)
         {
@@ -232,6 +232,18 @@ namespace FlagFtp
             long length = this.GetFileSize(file);
 
             return new FtpFileInfo(file, lastWriteTime, length);
+        }
+
+        /// <summary>
+        /// Gets the <see cref="FtpDirectoryInfo"/> for the specified URI.
+        /// </summary>
+        /// <param name="directory">The URI of the directory.</param>
+        /// <returns>
+        /// A <see cref="FtpDirectoryInfo"/> that contains informations about the directory.
+        /// </returns>
+        public FtpDirectoryInfo GetDirectoryInfo(Uri directory)
+        {
+            return new FtpDirectoryInfo(directory);
         }
 
         /// <summary>
