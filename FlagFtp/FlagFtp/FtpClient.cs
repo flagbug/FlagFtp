@@ -243,6 +243,12 @@ namespace FlagFtp
         /// </returns>
         public FtpDirectoryInfo GetDirectoryInfo(Uri directory)
         {
+            if (directory == null)
+                throw new ArgumentNullException("directory");
+
+            if (directory.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
+
             return new FtpDirectoryInfo(directory);
         }
 
