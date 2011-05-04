@@ -170,11 +170,7 @@ namespace FlagFtp
             if (file.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The file isn't a valid FTP URI", "file");
 
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(file);
-            request.Credentials = this.Credentials;
-            request.Method = WebRequestMethods.Ftp.DeleteFile;
-
-            using (var response = request.GetResponse()) { }
+            using (var response = this.CreateResponse(file, WebRequestMethods.Ftp.DeleteFile)) { }
         }
 
         /// <summary>
@@ -189,11 +185,7 @@ namespace FlagFtp
             if (directory.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
 
-            WebRequest request = WebRequest.Create(directory);
-            request.Method = WebRequestMethods.Ftp.MakeDirectory;
-            request.Credentials = this.Credentials;
-
-            using (var response = request.GetResponse()) { }
+            using (var response = this.CreateResponse(directory, WebRequestMethods.Ftp.MakeDirectory)) { }
         }
 
         /// <summary>
@@ -220,11 +212,7 @@ namespace FlagFtp
             if (directory.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
 
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(directory);
-            request.Credentials = this.Credentials;
-            request.Method = WebRequestMethods.Ftp.RemoveDirectory;
-
-            request.GetResponse();
+            using (var response = this.CreateResponse(directory, WebRequestMethods.Ftp.RemoveDirectory)) { }
         }
 
         /// <summary>
@@ -281,13 +269,9 @@ namespace FlagFtp
             if (file.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The file isn't a valid FTP URI", "file");
 
-            FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(file);
-            request.Credentials = this.Credentials;
-            request.Method = WebRequestMethods.Ftp.GetDateTimestamp;
-
             try
             {
-                using (var response = request.GetResponse()) { }
+                using (var response = this.CreateResponse(file, WebRequestMethods.Ftp.GetDateTimestamp)) { }
             }
 
             catch (WebException ex)
@@ -324,13 +308,9 @@ namespace FlagFtp
             if (directory.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
 
-            FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(directory);
-            request.Credentials = this.Credentials;
-            request.Method = WebRequestMethods.Ftp.ListDirectory;
-
             try
             {
-                using (var response = request.GetResponse()) { }
+                using (var response = this.CreateResponse(directory, WebRequestMethods.Ftp.ListDirectory)) { }
             }
 
             catch (WebException ex)
@@ -368,11 +348,7 @@ namespace FlagFtp
             if (directory.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
 
-            FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(directory);
-            request.Credentials = this.Credentials;
-            request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
-
-            using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
+            using (var response = (this.CreateResponse(directory, WebRequestMethods.Ftp.ListDirectoryDetails)))
             {
                 using (Stream responseStream = response.GetResponseStream())
                 {
@@ -432,12 +408,7 @@ namespace FlagFtp
             if (file.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The file isn't a valid FTP URI", "file");
 
-            FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(file);
-
-            request.Method = WebRequestMethods.Ftp.GetDateTimestamp;
-            request.Credentials = this.Credentials;
-
-            using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
+            using (var response = this.CreateResponse(file, WebRequestMethods.Ftp.GetDateTimestamp))
             {
                 return response.LastModified;
             }
@@ -458,15 +429,32 @@ namespace FlagFtp
             if (file.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The file isn't a valid FTP URI", "file");
 
-            FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(file);
-
-            request.Method = WebRequestMethods.Ftp.GetFileSize;
-            request.Credentials = this.Credentials;
-
-            using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
+            using (var response = this.CreateResponse(file, WebRequestMethods.Ftp.GetFileSize))
             {
                 return response.ContentLength;
             }
+        }
+
+        /// <summary>
+        /// Creates a <see cref="System.Net.FtpWebResponse"/> from the specified request URI and request method.
+        /// </summary>
+        /// <param name="requestUri">The request URI.</param>
+        /// <param name="requestMethod">The request method.</param>
+        /// <returns></returns>
+        private FtpWebResponse CreateResponse(Uri requestUri, string requestMethod)
+        {
+            if (requestUri == null)
+                throw new ArgumentNullException("requestUri");
+
+            if (requestUri.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The request URI isn't a valid FTP URI", "requestUri");
+
+            var request = FtpWebRequest.Create(requestUri);
+
+            request.Method = requestMethod;
+            request.Credentials = this.Credentials;
+
+            return (FtpWebResponse)request.GetResponse();
         }
     }
 }
