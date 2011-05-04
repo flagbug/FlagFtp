@@ -213,6 +213,28 @@ namespace FlagFtp
         }
 
         /// <summary>
+        /// Gets the <see cref="FtpFileInfo"/> for the specified URI.
+        /// </summary>
+        /// <param name="file">The URI of the file.</param>
+        /// <returns>
+        /// A <see cref="FtpFileInfo"/> that contains informations about the file.
+        /// If the file doesn't exists, null.
+        /// </returns>
+        public FtpFileInfo GetFileInfo(Uri file)
+        {
+            if (file == null)
+                throw new ArgumentNullException("file");
+
+            if (file.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The file isn't a valid FTP URI", "file");
+
+            DateTime lastWriteTime = this.GetTimeStamp(file);
+            long length = this.GetFileSize(file);
+
+            return new FtpFileInfo(file, lastWriteTime, length);
+        }
+
+        /// <summary>
         /// Gets the files or directories from the specified directory.
         /// </summary>
         /// <param name="directory">The directory.</param>
