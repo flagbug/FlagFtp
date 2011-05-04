@@ -13,11 +13,6 @@ namespace FlagFtp
     public class FtpClient
     {
         /// <summary>
-        /// Gets the host.
-        /// </summary>
-        public Uri Host { get; private set; }
-
-        /// <summary>
         /// Gets or sets the credentials.
         /// </summary>
         /// <value>
@@ -28,14 +23,11 @@ namespace FlagFtp
         /// <summary>
         /// Initializes a new instance of the <see cref="FtpClient"/> class.
         /// </summary>
-        /// <param name="host">The host.</param>
-        public FtpClient(Uri host)
+        /// <param name="credentials">The credentials.</param>
+        public FtpClient(NetworkCredential credentials)
         {
-            if (host == null)
-                throw new ArgumentNullException("host");
-
-            if (host.Scheme != Uri.UriSchemeFtp)
-                throw new ArgumentException("The host isn't a valid FTP URI", "host");
+            if (credentials == null)
+                throw new ArgumentNullException("credentials");
         }
 
         /// <summary>
@@ -265,7 +257,7 @@ namespace FlagFtp
             if (file.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The file isn't a valid FTP URI", "file");
 
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(file);
+            FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(file);
             request.Credentials = this.Credentials;
             request.Method = WebRequestMethods.Ftp.GetDateTimestamp;
 
@@ -306,7 +298,7 @@ namespace FlagFtp
             if (directory.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
 
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(directory);
+            FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(directory);
             request.Credentials = this.Credentials;
             request.Method = WebRequestMethods.Ftp.ListDirectory;
 
@@ -349,9 +341,8 @@ namespace FlagFtp
                 throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
 
             FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(directory);
-
-            request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
             request.Credentials = this.Credentials;
+            request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
 
             using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
             {
