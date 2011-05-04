@@ -80,10 +80,7 @@ namespace FlagFtp
             if (file == null)
                 throw new ArgumentNullException("file");
 
-            WebClient client = new WebClient();
-            client.Credentials = this.Credentials;
-
-            return new FtpStream(client.OpenRead(file.Uri), file.Length);
+            return new FtpStream(this.CreateClient().OpenRead(file.Uri), file.Length);
         }
 
         /// <summary>
@@ -101,12 +98,9 @@ namespace FlagFtp
             if (file.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The file isn't a valid FTP URI", "file");
 
-            WebClient client = new WebClient();
-            client.Credentials = this.Credentials;
-
             long fileSize = this.GetFileSize(file);
 
-            return new FtpStream(client.OpenRead(file), fileSize);
+            return new FtpStream(this.CreateClient().OpenRead(file), fileSize);
         }
 
         /// <summary>
@@ -139,11 +133,8 @@ namespace FlagFtp
             if (file.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The file isn't a valid FTP URI", "file");
 
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(file);
-            request.Credentials = this.Credentials;
-            request.Method = WebRequestMethods.Ftp.UploadFile;
-
-            return request.GetRequestStream();
+            return this.CreateRequest(file, WebRequestMethods.Ftp.UploadFile)
+                .GetRequestStream();
         }
 
         /// <summary>
@@ -436,11 +427,13 @@ namespace FlagFtp
         }
 
         /// <summary>
-        /// Creates a <see cref="System.Net.FtpWebResponse"/> from the specified request URI and request method.
+        /// Creates a <see cref="System.Net.FtpWebResponse"/> from the specified request URI, request method and the necessary credentials.
         /// </summary>
         /// <param name="requestUri">The request URI.</param>
         /// <param name="requestMethod">The request method.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// A <see cref="System.Net.FtpWebRequest"/> with the specified request uri, request method and the necessary credentuials.
+        /// </returns>
         private FtpWebResponse CreateResponse(Uri requestUri, string requestMethod)
         {
             if (requestUri == null)
@@ -449,12 +442,45 @@ namespace FlagFtp
             if (requestUri.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The request URI isn't a valid FTP URI", "requestUri");
 
-            var request = FtpWebRequest.Create(requestUri);
+            return (FtpWebResponse)this.CreateRequest(requestUri, requestMethod).GetResponse();
+        }
+
+        /// <summary>
+        /// Creates a <see cref="System.Net.FtpWebRequest"/> from the specified request URI, request method and the necessary credentials.
+        /// </summary>
+        /// <param name="requestUri">The request URI.</param>
+        /// <param name="requestMethod">The request method.</param>
+        /// <returns>
+        /// A <see cref="System.Net.FtpWebRequest"/> with the specified request uri, request method and the necessary credentuials.
+        /// </returns>
+        private FtpWebRequest CreateRequest(Uri requestUri, string requestMethod)
+        {
+            if (requestUri == null)
+                throw new ArgumentNullException("requestUri");
+
+            if (requestUri.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The request URI isn't a valid FTP URI", "requestUri");
+
+            FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(requestUri);
 
             request.Method = requestMethod;
             request.Credentials = this.Credentials;
 
-            return (FtpWebResponse)request.GetResponse();
+            return request;
+        }
+
+        /// <summary>
+        /// Creates a <see cref="System.Net.WebClient"/> with the necessary credentials.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.Net.WebClient"/> with the necessary credentials
+        /// </returns>
+        private WebClient CreateClient()
+        {
+            WebClient client = new WebClient();
+            client.Credentials = this.Credentials;
+
+            return client;
         }
     }
 }
