@@ -159,7 +159,7 @@ namespace FlagFtp
             request.Credentials = this.Credentials;
             request.Method = WebRequestMethods.Ftp.DeleteFile;
 
-            request.GetResponse();
+            using (var response = request.GetResponse()) { }
         }
 
         /// <summary>
@@ -250,6 +250,88 @@ namespace FlagFtp
                 throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
 
             return new FtpDirectoryInfo(directory);
+        }
+
+        /// <summary>
+        /// Determines if the specified file exists on the FTP server.
+        /// </summary>
+        /// <param name="file">The URI of the file.</param>
+        /// <returns>True, if the file exists; otherwise false.</returns>
+        public bool FileExists(Uri file)
+        {
+            if (file == null)
+                throw new ArgumentNullException("file");
+
+            if (file.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The file isn't a valid FTP URI", "file");
+
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(file);
+            request.Credentials = this.Credentials;
+            request.Method = WebRequestMethods.Ftp.GetDateTimestamp;
+
+            try
+            {
+                using (var response = request.GetResponse()) { }
+            }
+
+            catch (WebException ex)
+            {
+                using (var response = (FtpWebResponse)ex.Response)
+                {
+                    if (response.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
+                    {
+                        return false;
+                    }
+
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Determines if the specified directory exists on the FTP server.
+        /// </summary>
+        /// <param name="file">The URI of the directory.</param>
+        /// <returns>True, if the directory exists; otherwise false.</returns>
+        public bool DirectoryExists(Uri directory)
+        {
+            if (directory == null)
+                throw new ArgumentNullException("directory");
+
+            if (directory.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
+
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(directory);
+            request.Credentials = this.Credentials;
+            request.Method = WebRequestMethods.Ftp.ListDirectory;
+
+            try
+            {
+                using (var response = request.GetResponse()) { }
+            }
+
+            catch (WebException ex)
+            {
+                using (var response = (FtpWebResponse)ex.Response)
+                {
+                    if (response.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
+                    {
+                        return false;
+                    }
+
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
