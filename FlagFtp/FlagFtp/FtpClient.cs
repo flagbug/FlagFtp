@@ -28,6 +28,8 @@ namespace FlagFtp
         {
             if (credentials == null)
                 throw new ArgumentNullException("credentials");
+
+            this.Credentials = credentials;
         }
 
         /// <summary>
