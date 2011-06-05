@@ -301,28 +301,14 @@ namespace FlagFtp
             if (directory.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
 
-            try
+            var directories = this.GetDirectories(new Uri(directory, ".."));
+
+            if (directories.Any(dir => dir.Uri.AbsoluteUri == directory.AbsoluteUri))
             {
-                using (var response = this.CreateResponse(directory, WebRequestMethods.Ftp.ListDirectory)) { }
+                return true;
             }
 
-            catch (WebException ex)
-            {
-                using (var response = (FtpWebResponse)ex.Response)
-                {
-                    if (response.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
-                    {
-                        return false;
-                    }
-
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return true;
+            return false;
         }
 
         /// <summary>
