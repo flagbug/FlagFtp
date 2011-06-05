@@ -262,28 +262,14 @@ namespace FlagFtp
             if (file.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The file isn't a valid FTP URI", "file");
 
-            try
+            var files = this.GetFiles(new Uri(file, ".."));
+
+            if (files.Any(f => f.Uri.AbsoluteUri == file.AbsoluteUri))
             {
-                using (var response = this.CreateResponse(file, WebRequestMethods.Ftp.GetDateTimestamp)) { }
+                return true;
             }
 
-            catch (WebException ex)
-            {
-                using (var response = (FtpWebResponse)ex.Response)
-                {
-                    if (response.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
-                    {
-                        return false;
-                    }
-
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return true;
+            return false; ;
         }
 
         /// <summary>
