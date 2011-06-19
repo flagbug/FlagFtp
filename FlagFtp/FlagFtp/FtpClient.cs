@@ -47,6 +47,8 @@ namespace FlagFtp
             if (directory.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
 
+            directory = this.NormalizeUri(directory);
+
             return this.GetFileSystemInfos(directory, FtpFileSystemInfoType.Directory)
                 .Cast<FtpDirectoryInfo>();
         }
@@ -65,6 +67,8 @@ namespace FlagFtp
 
             if (directory.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
+
+            directory = this.NormalizeUri(directory);
 
             return this.GetFileSystemInfos(directory, FtpFileSystemInfoType.File)
                 .Cast<FtpFileInfo>();
@@ -99,6 +103,8 @@ namespace FlagFtp
 
             if (file.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The file isn't a valid FTP URI", "file");
+
+            file = this.NormalizeUri(file);
 
             long fileSize = this.GetFileSize(file);
 
@@ -135,6 +141,8 @@ namespace FlagFtp
             if (file.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The file isn't a valid FTP URI", "file");
 
+            file = this.NormalizeUri(file);
+
             return this.CreateRequest(file, WebRequestMethods.Ftp.UploadFile)
                 .GetRequestStream();
         }
@@ -163,6 +171,8 @@ namespace FlagFtp
             if (file.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The file isn't a valid FTP URI", "file");
 
+            file = this.NormalizeUri(file);
+
             using (var response = this.CreateResponse(file, WebRequestMethods.Ftp.DeleteFile)) { }
         }
 
@@ -177,6 +187,8 @@ namespace FlagFtp
 
             if (directory.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
+
+            directory = this.NormalizeUri(directory);
 
             using (var response = this.CreateResponse(directory, WebRequestMethods.Ftp.MakeDirectory)) { }
         }
@@ -205,6 +217,8 @@ namespace FlagFtp
             if (directory.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
 
+            directory = this.NormalizeUri(directory);
+
             using (var response = this.CreateResponse(directory, WebRequestMethods.Ftp.RemoveDirectory)) { }
         }
 
@@ -222,6 +236,8 @@ namespace FlagFtp
 
             if (file.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The file isn't a valid FTP URI", "file");
+
+            file = this.NormalizeUri(file);
 
             DateTime lastWriteTime = this.GetTimeStamp(file);
             long length = this.GetFileSize(file);
@@ -244,6 +260,8 @@ namespace FlagFtp
             if (directory.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
 
+            directory = this.NormalizeUri(directory);
+
             return new FtpDirectoryInfo(directory);
         }
 
@@ -262,9 +280,11 @@ namespace FlagFtp
             if (file.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The file isn't a valid FTP URI", "file");
 
+            file = this.NormalizeUri(file);
+
             var files = this.GetFiles(new Uri(file, ".."));
 
-            if (files.Any(f => f.Uri.AbsoluteUri == file.AbsoluteUri))
+            if (files.Any(f => this.NormalizeUri(f.Uri).AbsoluteUri == file.AbsoluteUri))
             {
                 return true;
             }
@@ -345,12 +365,12 @@ namespace FlagFtp
                         {
                             case FtpFileSystemInfoType.Directory:
                                 return infos.Where(info => info.IsDirectory)
-                                    .Select(info => new FtpDirectoryInfo(info.FullName))
+                                    .Select(info => new FtpDirectoryInfo(this.NormalizeUri(info.FullName)))
                                     .Cast<FtpFileSystemInfo>();
 
                             case FtpFileSystemInfoType.File:
                                 return infos.Where(info => !info.IsDirectory)
-                                    .Select(info => new FtpFileInfo(info.FullName, this.GetTimeStamp(info.FullName), info.FileLength))
+                                    .Select(info => new FtpFileInfo(this.NormalizeUri(info.FullName), this.GetTimeStamp(info.FullName), info.FileLength))
                                     .Cast<FtpFileSystemInfo>();
                         }
                     }
@@ -375,6 +395,8 @@ namespace FlagFtp
             if (file.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The file isn't a valid FTP URI", "file");
 
+            file = this.NormalizeUri(file);
+
             using (var response = this.CreateResponse(file, WebRequestMethods.Ftp.GetDateTimestamp))
             {
                 return response.LastModified;
@@ -395,6 +417,8 @@ namespace FlagFtp
 
             if (file.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The file isn't a valid FTP URI", "file");
+
+            file = this.NormalizeUri(file);
 
             using (var response = this.CreateResponse(file, WebRequestMethods.Ftp.GetFileSize))
             {
@@ -418,6 +442,8 @@ namespace FlagFtp
             if (requestUri.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The request URI isn't a valid FTP URI", "requestUri");
 
+            requestUri = this.NormalizeUri(requestUri);
+
             return (FtpWebResponse)this.CreateRequest(requestUri, requestMethod).GetResponse();
         }
 
@@ -436,6 +462,8 @@ namespace FlagFtp
 
             if (requestUri.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The request URI isn't a valid FTP URI", "requestUri");
+
+            requestUri = this.NormalizeUri(requestUri);
 
             FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(requestUri);
 
@@ -477,7 +505,7 @@ namespace FlagFtp
             //Cut the "ftp://" off
             path = path.Substring(6);
 
-            path = path.Replace("//", "/");
+            path = path.Replace("//", "/").Replace(@"\\", "/").Replace(@"\", "/");
 
             return new Uri("ftp://" + path);
         }

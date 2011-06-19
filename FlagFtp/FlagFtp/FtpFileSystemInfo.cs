@@ -60,7 +60,7 @@ namespace FlagFtp
                 throw new ArgumentNullException("uri");
 
             if (uri.Scheme != Uri.UriSchemeFtp)
-                throw new ArgumentException("The uri isn't a valid FTP Uri", "uri");
+                throw new ArgumentException("The URI isn't a valid FTP Uri", "uri");
 
             this.Uri = uri;
             this.Type = type;
