@@ -287,9 +287,11 @@ namespace FlagFtp
             if (directory.Scheme != Uri.UriSchemeFtp)
                 throw new ArgumentException("The directory isn't a valid FTP URI", "directory");
 
+            directory = this.NormalizeUri(directory);
+
             var directories = this.GetDirectories(new Uri(directory, ".."));
 
-            if (directories.Any(dir => dir.Uri.AbsoluteUri == directory.AbsoluteUri))
+            if (directories.Any(dir => this.NormalizeUri(dir.Uri).AbsoluteUri == directory.AbsoluteUri))
             {
                 return true;
             }
@@ -455,6 +457,29 @@ namespace FlagFtp
             client.Credentials = this.Credentials;
 
             return client;
+        }
+
+        /// <summary>
+        /// Normalizes the URI.
+        /// </summary>
+        /// <param name="uri">The URI.</param>
+        /// <returns>A normalized URI</returns>
+        private Uri NormalizeUri(Uri uri)
+        {
+            if (uri == null)
+                throw new ArgumentNullException("uri");
+
+            if (uri.Scheme != Uri.UriSchemeFtp)
+                throw new ArgumentException("The URI isn't a valid FTP URI", "uri");
+
+            string path = uri.AbsoluteUri;
+
+            //Cut the "ftp://" off
+            path = path.Substring(6);
+
+            path = path.Replace("//", "/");
+
+            return new Uri("ftp://" + path);
         }
     }
 }
