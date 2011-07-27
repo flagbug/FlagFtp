@@ -353,13 +353,12 @@ namespace FlagFtp
                                 match =>
                                 new
                                 {
-                                    IsDirectory = match.Groups["FileOrDirectory"].Value == "d" ? true : false,
+                                    IsDirectory = match.Groups["FileOrDirectory"].Value == "d",
                                     FileLength = long.Parse(match.Groups["FileSize"].Value),
                                     Name = match.Groups["Name"].Value,
                                     FullName = new Uri(new Uri(directory + "/"), match.Groups["Name"].Value)
                                 })
-                            .Where(info => info.Name != "." && info.Name != "..")
-                            .ToList();
+                            .Where(info => info.Name != "." && info.Name != "..");
 
                         switch (type)
                         {
