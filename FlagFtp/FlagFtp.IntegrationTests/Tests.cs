@@ -13,24 +13,27 @@ namespace FlagFtp.IntegrationTests
             string username;
             string password;
 
-            Console.WriteLine("FTP-Address: ");
+            Console.Write("FTP-Address: ");
             Console.Write("ftp://");
 
             hostAddress = "ftp://" + Console.ReadLine();
 
-            Console.WriteLine("Username: ");
+            Console.Write("Username: ");
 
             username = Console.ReadLine();
 
-            Console.WriteLine("Password: ");
+            Console.Write("Password: ");
 
             password = Console.ReadLine();
+
+            Console.WriteLine("Starting integration test...");
+            Console.WriteLine();
 
             client = new FtpClient(new NetworkCredential(username, password));
 
             CreateDirectoryTest(new Uri(new Uri(hostAddress), "/TestDirectory1"));
 
-            Console.WriteLine("Finished all tests.");
+            Console.WriteLine("Integration test finished.");
             Console.ReadLine();
         }
 
