@@ -1,0 +1,6 @@
+syntax: glob
+FlagFtp/FlagFtp.IntegrationTests/bin
+FlagFtp/FlagFtp.IntegrationTests/obj
+FlagFtp/FlagFtp/bin
+FlagFtp/FlagFtp/obj
+*.suo
