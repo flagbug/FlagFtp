@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 
 namespace FlagFtp.IntegrationTests
@@ -13,18 +14,22 @@ namespace FlagFtp.IntegrationTests
             string username;
             string password;
 
-            Console.Write("FTP-Address: ");
-            Console.Write("ftp://");
+            Console.WriteLine("Reading login data...");
 
-            hostAddress = "ftp://" + Console.ReadLine();
+            /*
+             * Read the login data for the server from a text-file called "Login",
+             * with the following structure:
+             *
+             * Server address
+             * Username
+             * Password
+             *
+             */
+            var loginData = File.ReadAllLines("Login");
 
-            Console.Write("Username: ");
-
-            username = Console.ReadLine();
-
-            Console.Write("Password: ");
-
-            password = Console.ReadLine();
+            hostAddress = loginData[0];
+            username = loginData[1];
+            password = loginData[2];
 
             Console.WriteLine("Starting integration test...");
             Console.WriteLine();
@@ -32,7 +37,9 @@ namespace FlagFtp.IntegrationTests
             client = new FtpClient(new NetworkCredential(username, password));
 
             CreateDirectoryTest(new Uri(new Uri(hostAddress), "/TestDirectory1"));
+            DeleteDirectoryTest(new Uri(new Uri(hostAddress), "/TestDirectory1"));
 
+            Console.WriteLine();
             Console.WriteLine("Integration test finished.");
             Console.ReadLine();
         }
@@ -43,6 +50,20 @@ namespace FlagFtp.IntegrationTests
 
             bool exists = client.DirectoryExists(directory);
             Console.WriteLine("CreateDirectory method has " + (exists ? "SUCCEED" : "FAILED"));
+        }
+
+        private static void DeleteDirectoryTest(Uri directory)
+        {
+            bool succeed = false;
+
+            if (client.DirectoryExists(directory))
+            {
+                client.DeleteDirectory(directory);
+
+                succeed = !client.DirectoryExists(directory);
+            }
+
+            Console.WriteLine("CreateDirectory method has " + (succeed ? "SUCCEED" : "FAILED"));
         }
     }
 }
