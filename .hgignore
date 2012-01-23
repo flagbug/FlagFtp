@@ -5,3 +5,4 @@ FlagFtp/FlagFtp/bin
 FlagFtp/FlagFtp/obj
 *.suo
 FlagFtp/FlagFtp.IntegrationTests/Login
+FlagFtp/_ReSharper.FlagFtp

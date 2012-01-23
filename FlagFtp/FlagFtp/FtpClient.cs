@@ -173,7 +173,8 @@ namespace FlagFtp
 
             file = this.NormalizeUri(file);
 
-            using (var response = this.CreateResponse(file, WebRequestMethods.Ftp.DeleteFile)) { }
+            using (this.CreateResponse(file, WebRequestMethods.Ftp.DeleteFile))
+            { }
         }
 
         /// <summary>
@@ -190,7 +191,8 @@ namespace FlagFtp
 
             directory = this.NormalizeUri(directory);
 
-            using (var response = this.CreateResponse(directory, WebRequestMethods.Ftp.MakeDirectory)) { }
+            using (this.CreateResponse(directory, WebRequestMethods.Ftp.MakeDirectory))
+            { }
         }
 
         /// <summary>
@@ -219,7 +221,8 @@ namespace FlagFtp
 
             directory = this.NormalizeUri(directory);
 
-            using (var response = this.CreateResponse(directory, WebRequestMethods.Ftp.RemoveDirectory)) { }
+            using (this.CreateResponse(directory, WebRequestMethods.Ftp.RemoveDirectory))
+            { }
         }
 
         /// <summary>
@@ -284,12 +287,7 @@ namespace FlagFtp
 
             var files = this.GetFiles(new Uri(file, ".."));
 
-            if (files.Any(f => this.NormalizeUri(f.Uri).AbsoluteUri == file.AbsoluteUri))
-            {
-                return true;
-            }
-
-            return false; ;
+            return files.Any(f => this.NormalizeUri(f.Uri).AbsoluteUri == file.AbsoluteUri);
         }
 
         /// <summary>
@@ -311,12 +309,7 @@ namespace FlagFtp
 
             var directories = this.GetDirectories(new Uri(directory, ".."));
 
-            if (directories.Any(dir => this.NormalizeUri(dir.Uri).AbsoluteUri == directory.AbsoluteUri))
-            {
-                return true;
-            }
-
-            return false;
+            return directories.Any(dir => this.NormalizeUri(dir.Uri).AbsoluteUri == directory.AbsoluteUri);
         }
 
         /// <summary>
@@ -339,11 +332,11 @@ namespace FlagFtp
             {
                 using (Stream responseStream = response.GetResponseStream())
                 {
-                    using (StreamReader reader = new StreamReader(responseStream))
+                    using (var reader = new StreamReader(responseStream))
                     {
                         string all = reader.ReadToEnd();
 
-                        Regex regex = new Regex(@"^(?<FileOrDirectory>[d-])(?<Attributes>[rwxt-]{3}){3}\s+\d{1,}\s+.*?(?<FileSize>\d{1,})\s+(?<Date>\w+\s+\d{1,2}\s+(?:\d{4})?)(?<YearOrTime>\d{1,2}:\d{2})?\s+(?<Name>.+?)\s?$",
+                        var regex = new Regex(@"^(?<FileOrDirectory>[d-])(?<Attributes>[rwxt-]{3}){3}\s+\d{1,}\s+.*?(?<FileSize>\d{1,})\s+(?<Date>\w+\s+\d{1,2}\s+(?:\d{4})?)(?<YearOrTime>\d{1,2}:\d{2})?\s+(?<Name>.+?)\s?$",
                             RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
 
                         MatchCollection matches = regex.Matches(all);
@@ -464,7 +457,7 @@ namespace FlagFtp
 
             requestUri = this.NormalizeUri(requestUri);
 
-            FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(requestUri);
+            var request = (FtpWebRequest)WebRequest.Create(requestUri);
 
             request.Method = requestMethod;
             request.Credentials = this.Credentials;
@@ -480,8 +473,7 @@ namespace FlagFtp
         /// </returns>
         private WebClient CreateClient()
         {
-            WebClient client = new WebClient();
-            client.Credentials = this.Credentials;
+            var client = new WebClient { Credentials = this.Credentials };
 
             return client;
         }

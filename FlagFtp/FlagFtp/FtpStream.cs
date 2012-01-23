@@ -9,8 +9,8 @@ namespace FlagFtp
     /// </summary>
     public class FtpStream : Stream
     {
-        private Stream internalStream;
-        private long length;
+        private readonly Stream internalStream;
+        private readonly long length;
 
         /// <summary>
         /// When overridden in a derived class, gets a value indicating whether the current stream supports reading.
@@ -237,7 +237,7 @@ namespace FlagFtp
         /// <exception cref="T:System.NotSupportedException">
         /// The current Stream implementation does not support the read operation.
         ///   </exception>
-        public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, System.AsyncCallback callback, object state)
+        public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
             return this.internalStream.BeginRead(buffer, offset, count, callback, state);
         }
@@ -268,7 +268,7 @@ namespace FlagFtp
         /// <exception cref="T:System.NotSupportedException">
         /// The current Stream implementation does not support the write operation.
         ///   </exception>
-        public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, System.AsyncCallback callback, object state)
+        public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
             return this.internalStream.BeginWrite(buffer, offset, count, callback, state);
         }
@@ -281,10 +281,7 @@ namespace FlagFtp
         ///   </returns>
         public override bool CanTimeout
         {
-            get
-            {
-                return this.internalStream.CanTimeout;
-            }
+            get { return this.internalStream.CanTimeout; }
         }
 
         /// <summary>
@@ -452,14 +449,8 @@ namespace FlagFtp
         ///   </exception>
         public override int WriteTimeout
         {
-            get
-            {
-                return this.internalStream.WriteTimeout;
-            }
-            set
-            {
-                this.internalStream.WriteTimeout = value;
-            }
+            get { return this.internalStream.WriteTimeout; }
+            set { this.internalStream.WriteTimeout = value; }
         }
 
         /// <summary>
