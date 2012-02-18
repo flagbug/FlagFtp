@@ -1,18 +1,16 @@
-FlagFtp
-=======
+# FlagFtp
 
-Overview
---------
+## Overview
+
 FlagFtp is a FTP library for .NET which supports various operations, such as retrieving file lists, 
 write and read from/to files, retrieving file and directory infos, etc...
 
-NuGet
------
+## NuGet
+
 FlagConsole is available via NuGet!
 http://www.nuget.org/List/Packages/FlagFtp
 
-Example code
-------------
+## Example code
 
 *Retrieving a file list*
 
@@ -28,3 +26,7 @@ Example code
         Console.WriteLine(file.Length);
         Console.WriteLine(file.LastWriteTime);
     }
+    
+**Projects that use this library:**
+
+- [FlagSync](http://github.com/flagbug/FlagSync)
