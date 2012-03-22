@@ -2,7 +2,7 @@
 
 ## Overview
 
-FlagFtp is a FTP library for .NET, that supports various operations, such as retrieving file lists, 
+FlagFtp is an FTP library for .NET, that supports various operations, such as retrieving file lists, 
 write and read from/to files, retrieving file and directory infos, etc...
 
 ## NuGet
