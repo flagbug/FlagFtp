@@ -16,18 +16,19 @@ http://www.nuget.org/List/Packages/FlagFtp
 
 ```c#
 
-    var credentials = new NetworkCredentials("username", "password");
-    
-    var client = new FtpClient(credentials);
-    
-    IEnumerable<FtpFileInfo> files = client.GetFiles(new Uri("ftp://yourserver/yourdirectory/"));
-    
-    foreach(var file in files)
-    {
-        Console.WriteLine(file.Name);
-        Console.WriteLine(file.Length);
-        Console.WriteLine(file.LastWriteTime);
-    }
+var credentials = new NetworkCredentials("username", "password");
+
+var client = new FtpClient(credentials);
+
+IEnumerable<FtpFileInfo> files = client.GetFiles(new Uri("ftp://yourserver/yourdirectory/"));
+
+foreach(var file in files)
+{
+    Console.WriteLine(file.Name);
+    Console.WriteLine(file.Length);
+    Console.WriteLine(file.LastWriteTime);
+}
+
 ```
     
 **Projects that use this library:**
