@@ -14,6 +14,8 @@ http://www.nuget.org/List/Packages/FlagFtp
 
 *Retrieving a file list*
 
+```c#
+
     var credentials = new NetworkCredentials("username", "password");
     
     var client = new FtpClient(credentials);
@@ -26,6 +28,7 @@ http://www.nuget.org/List/Packages/FlagFtp
         Console.WriteLine(file.Length);
         Console.WriteLine(file.LastWriteTime);
     }
+```
     
 **Projects that use this library:**
 
