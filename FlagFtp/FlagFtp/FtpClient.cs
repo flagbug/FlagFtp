@@ -307,7 +307,7 @@ namespace FlagFtp
 
             directory = this.NormalizeUri(directory);
 
-            var directories = this.GetDirectories(new Uri(directory, ".."));
+            var directories = this.GetDirectories(new Uri(directory, "./"));
 
             return directories.Any(dir => this.NormalizeUri(dir.Uri).AbsoluteUri == directory.AbsoluteUri);
         }
