@@ -285,7 +285,7 @@ namespace FlagFtp
 
             file = this.NormalizeUri(file);
 
-            var files = this.GetFiles(new Uri(file, ".."));
+            var files = this.GetFiles(new Uri(file, "."));
 
             return files.Any(f => this.NormalizeUri(f.Uri).AbsoluteUri == file.AbsoluteUri);
         }
