@@ -336,7 +336,7 @@ namespace FlagFtp
                     {
                         string all = reader.ReadToEnd();
 
-                        var regex = new Regex(@"^(?<FileOrDirectory>[d-])(?<Attributes>[rwxt-]{3}){3}\s+\d{1,}\s+.*?(?<FileSize>\d{1,})\s+(?<Date>\w+\s+\d{1,2}\s+(?:\d{4})?)(?<YearOrTime>\d{1,2}:\d{2})?\s+(?<Name>.+?)\s?$",
+                        var regex = new Regex(@"^(?<FileOrDirectory>[d-])(?<Attributes>[rwxts-]{3}){3}\s+\d{1,}\s+.*?(?<FileSize>\d{1,})\s+(?<Date>\w+\s+\d{1,2}\s+(?:\d{4})?)(?<YearOrTime>\d{1,2}:\d{2})?\s+(?<Name>.+?)\s?$",
                             RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
 
                         MatchCollection matches = regex.Matches(all);
