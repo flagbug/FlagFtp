@@ -16,9 +16,9 @@ http://www.nuget.org/List/Packages/FlagFtp
 
 ```c#
 
-var credentials = new NetworkCredentials("username", "password");
+var credential = new NetworkCredential("username", "password");
 
-var client = new FtpClient(credentials);
+var client = new FtpClient(credential);
 
 IEnumerable<FtpFileInfo> files = client.GetFiles(new Uri("ftp://yourserver/yourdirectory/"));
 
